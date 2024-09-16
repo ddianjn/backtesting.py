@@ -78,6 +78,7 @@ class Strategy(metaclass=ABCMeta):
     def I(self,  # noqa: E743
           func: Callable, *args,
           name=None, plot=True, overlay=None, color=None, scatter=False,
+          col_name=None,
           **kwargs) -> np.ndarray:
         """
         Declare an indicator. An indicator is just an array of values,
@@ -129,7 +130,10 @@ class Strategy(metaclass=ABCMeta):
             raise RuntimeError(f'Indicator "{name}" error') from e
 
         if isinstance(value, pd.DataFrame):
-            value = value.values.T
+            if col_name is not None:
+                value = value[col_name]
+            else:
+                value = value.values.T
 
         if value is not None:
             value = try_(lambda: np.asarray(value, order='C'), None)
